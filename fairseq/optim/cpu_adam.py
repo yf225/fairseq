@@ -22,6 +22,9 @@ except ImportError as e:
 
 
 def _get_cpu_adam():
+    from deepspeed.ops.op_builder import CPUAdamBuilder
+    return CPUAdamBuilder().load()
+    '''
     try:
         from deepspeed.ops.op_builder import CPUAdamBuilder
         return CPUAdamBuilder().load()
@@ -29,6 +32,7 @@ def _get_cpu_adam():
         # fbcode
         from deepspeed.ops.adam import DeepSpeedCPUAdam as ds_opt_adam
         return ds_opt_adam
+    '''
 
 @dataclass
 class FairseqCPUAdamConfig(FairseqDataclass):
@@ -113,7 +117,7 @@ class CPUAdam(torch.optim.Optimizer):
         self.ds_opt_adam = _get_cpu_adam()
         adamw_mode = True
         self.ds_opt_adam.create_adam(
-            self.opt_id, lr, betas[0], betas[1], eps, weight_decay, adamw_mode
+            self.opt_id, lr, betas[0], betas[1], eps, weight_decay, adamw_mode, False
         )
 
     @property
